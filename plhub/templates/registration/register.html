@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-Cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - PL Hub</title>
+    <style>
+        body { font-family: sans-serif; margin: 2rem; max-width: 360px; }
+        h1 { margin-bottom: 1rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.25rem; }
+        .form-group input { width: 100%; padding: 0.5rem; }
+        button[type="submit"] { padding: 0.5rem 1rem; background: #5a4a7a; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+        .errorlist { color: #c00; font-size: 0.9rem; list-style: none; padding: 0; margin: 0.25rem 0 0 0; }
+        a { color: #5a4a7a; }
+    </style>
+</head>
+<body>
+    <h1>Register</h1>
+    <form method="post" action="{% url 'register' %}">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}<ul class="errorlist">{{ field.errors }}</ul>{% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit">Register</button>
+    </form>
+    <p style="margin-top: 1rem;"><a href="{% url 'login' %}">No account? Login</a> &nbsp;|&nbsp; <a href="/">Back</a></p>
+</body>
+</html>

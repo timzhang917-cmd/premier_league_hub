@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-Cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PL Hub</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        /* 顶部导航栏：提高层级，避免被下方欢迎区遮挡 */
+        .nav-top {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: #e8e0f0;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 10;
+        }
+        .nav-top a {
+            color: #4a3f5c;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        .nav-top a:hover {
+            background: #d4c8e0;
+            color: #3d3350;
+        }
+        .nav-top form button:hover {
+            background: #d4c8e0;
+            color: #3d3350;
+        }
+        /* 欢迎语区域 */
+        .welcome-box {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin-top: -15vh;
+        }
+        .welcome-box h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-top">
+        <a href="/news/">News</a>
+        <a href="/teams/">Teams</a>
+        <a href="/forum/">Forum</a>
+        <a href="/match-results/">Match Results</a>
+        <a href="/league-table/">League Table</a>
+        {% if user.is_authenticated %}
+            <span style="margin-left: auto; color: #4a3f5c;">{{ user.username }}</span>
+            <form action="{% url 'logout' %}" method="post" style="display: inline; margin: 0;">
+                {% csrf_token %}
+                <button type="submit" style="background: none; border: none; color: #4a3f5c; font-size: 1rem; font-weight: 500; cursor: pointer; padding: 0.5rem 1rem; border-radius: 6px; font-family: inherit;">Logout</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}" style="margin-left: auto;">Login</a>
+            <a href="{% url 'register' %}">Register</a>
+        {% endif %}
+    </nav>
+    <div class="welcome-box">
+        <h1>Welcome to PL Hub !</h1>
+    </div>
+</body>
+</html>

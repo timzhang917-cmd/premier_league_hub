@@ -1,0 +1,139 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-Cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News - PL Hub</title>
+    <style>
+        body { font-family: sans-serif; margin: 2rem; }
+        h1 { margin-bottom: 1rem; }
+        .news-images {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4rem;
+            max-width: 1000px;
+            margin: 1.5rem 0;
+        }
+        .news-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .news-images .news-card img {
+            width: 100%;
+            height: auto;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            display: block;
+        }
+        .read-more-btn {
+            margin-top: 0.75rem;
+            padding: 0.5rem 1.25rem;
+            background: #5a4a7a;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+        .read-more-btn:hover {
+            background: #6d5a8f;
+        }
+        /* 弹窗遮罩 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.show {
+            display: flex;
+        }
+        .modal-box {
+            background: #fff;
+            padding: 1.5rem 2rem;
+            border-radius: 10px;
+            max-width: 480px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .modal-box .modal-close {
+            display: block;
+            margin-top: 1rem;
+            padding: 0.4rem 1rem;
+            background: #888;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .modal-box .modal-close:hover {
+            background: #666;
+        }
+        .back-link { margin-top: 2rem; }
+        .back-link a { color: #5a4a7a; }
+    </style>
+</head>
+<body>
+    <h1>News</h1>
+    <p>Latest News</p>
+    <div class="news-images">
+        <div class="news-card">
+            <img src="{% static 'news/images/new1.png' %}" alt="News 1">
+            <button type="button" class="read-more-btn" data-modal="modal-1">Read more</button>
+        </div>
+        <div class="news-card">
+            <img src="{% static 'news/images/new2.png' %}" alt="News 2">
+            <button type="button" class="read-more-btn" data-modal="modal-2">Read more</button>
+        </div>
+        <div class="news-card">
+            <img src="{% static 'news/images/new3.png' %}" alt="News 3">
+            <button type="button" class="read-more-btn" data-modal="modal-3">Read more</button>
+        </div>
+        <div class="news-card">
+            <img src="{% static 'news/images/new4.png' %}" alt="News 4">
+            <button type="button" class="read-more-btn" data-modal="modal-4">Read more</button>
+        </div>
+    </div>
+
+    <!-- 弹窗：内容稍后在此编辑 -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal-box">
+            <div id="modal-content">
+                <p>waiting for content</p>
+            </div>
+            <button type="button" class="modal-close" aria-label="close">close</button>
+        </div>
+    </div>
+
+    <p class="back-link"><a href="{% url 'home' %}">Back</a></p>
+
+    <script>
+        (function() {
+            var overlay = document.getElementById('modal-overlay');
+            var content = document.getElementById('modal-content');
+            var closeBtn = overlay.querySelector('.modal-close');
+            document.querySelectorAll('.read-more-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    content.innerHTML = '<p>waiting for content</p>';
+                    overlay.classList.add('show');
+                });
+            });
+            closeBtn.addEventListener('click', function() { overlay.classList.remove('show'); });
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) overlay.classList.remove('show');
+            });
+        })();
+    </script>
+</body>
+</html>

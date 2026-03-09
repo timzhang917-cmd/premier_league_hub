@@ -1,0 +1,25 @@
+# --- Python 相关 ---
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+
+# --- Django 相关 ---
+# 建议忽略本地数据库，这样别人拉取代码时不会覆盖掉你的数据
+db.sqlite3
+# 存放用户上传文件的目录
+media/
+# 静态文件收集目录
+staticfiles/
+
+# --- 敏感信息 ---
+.env
+
+# --- Mac 系统相关 ---
+.DS_Store
+
+# --- IDE 相关 (可选) ---
+.vscode/
+.idea/
