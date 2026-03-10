@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="zh-Cn">
 <head>
@@ -12,12 +13,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            background-color: #f0eef5;
         }
         /* 顶部导航栏：提高层级，避免被下方欢迎区遮挡 */
         .nav-top {
             width: 100%;
             padding: 1rem 2rem;
-            background: #e8e0f0;
+            background: #d6c2ea;
             display: flex;
             justify-content: center;
             gap: 0.5rem;
@@ -44,14 +46,23 @@
         .welcome-box {
             flex: 1;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
             margin-top: -15vh;
         }
         .welcome-box h1 {
-            margin: 0;
+            margin: 0 0 1.5rem 0;
             font-size: 2.5rem;
+        }
+        .welcome-box .home-pic {
+            width: 100%;
+            max-width: 700px;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+            opacity: 0.91;
         }
     </style>
 </head>
@@ -75,6 +86,7 @@
     </nav>
     <div class="welcome-box">
         <h1>Welcome to PL Hub !</h1>
+        <img src="{% static 'plhub/images/home-bg.jpg' %}" alt="" class="home-pic">
     </div>
 </body>
 </html>
