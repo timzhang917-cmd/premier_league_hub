@@ -1,13 +1,135 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="zh-Cn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teams - PL Hub</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+        h1 { margin-bottom: 0.5rem; }
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 5rem;
+            margin: 1.5rem 0;
+        }
+        .team-cell {
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f2f8;
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: 0 2px 8px rgba(90, 74, 122, 0.08);
+            border: 2px solid transparent;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            cursor: pointer;
+        }
+        .team-cell:hover {
+            transform: scale(1.12);
+            box-shadow: 0 6px 24px rgba(90, 74, 122, 0.22);
+            border-color: #5a4a7a;
+        }
+        .team-logo {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            display: block;
+        }
+        .back-link { margin-top: 2rem; }
+        .back-link a { color: #5a4a7a; }
+        /* 球队介绍弹窗 */
+        .team-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .team-modal-overlay.show { display: flex; }
+        .team-modal-box {
+            background: #fff;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            max-width: 420px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+        .team-modal-box h2 { margin: 0 0 1rem 0; color: #3d3350; font-size: 1.35rem; }
+        .team-modal-box .modal-section { margin-bottom: 1rem; }
+        .team-modal-box .modal-section strong { color: #5a4a7a; }
+        .team-modal-box .modal-close-btn {
+            margin-top: 1rem;
+            padding: 0.5rem 1.25rem;
+            background: #5a4a7a;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .team-modal-box .modal-close-btn:hover { background: #6d5a8f; }
+    </style>
 </head>
 <body>
     <h1>Teams</h1>
-    <p>waiting for content</p>
-    <p><a href="{% url 'home' %}">Back</a></p>
+    <p>PL Clubs(Click to view introduction and honors)</p>
+    <div class="teams-grid">
+        {% for team in teams %}
+            <div class="team-cell" data-name="{{ team.name|escape }}" data-intro="{{ team.intro|escape }}" data-honors="{{ team.honors|escape }}">
+                <img src="{% static 'teams/logos/' %}{{ team.logo }}" alt="{{ team.name }}" class="team-logo">
+            </div>
+        {% empty %}
+            <p>暂无 logo，请将图片放入 <code>teams/static/teams/logos/</code> 文件夹。</p>
+        {% endfor %}
+    </div>
+
+    <div id="team-modal" class="team-modal-overlay">
+        <div class="team-modal-box">
+            <h2 id="team-modal-title">球队</h2>
+            <div class="modal-section"><strong>Introduction</strong><p id="team-modal-intro"></p></div>
+            <div class="modal-section"><strong>Honors</strong><p id="team-modal-honors"></p></div>
+            <button type="button" class="modal-close-btn" id="team-modal-close">Close</button>
+        </div>
+    </div>
+
+    <p class="back-link"><a href="{% url 'home' %}">Back to Home</a></p>
+
+    <script>
+        (function() {
+            var modal = document.getElementById('team-modal');
+            var title = document.getElementById('team-modal-title');
+            var intro = document.getElementById('team-modal-intro');
+            var honors = document.getElementById('team-modal-honors');
+            var closeBtn = document.getElementById('team-modal-close');
+            document.querySelectorAll('.team-cell').forEach(function(cell) {
+                cell.addEventListener('click', function() {
+                    title.textContent = this.getAttribute('data-name');
+                    intro.textContent = this.getAttribute('data-intro');
+                    honors.textContent = this.getAttribute('data-honors');
+                    modal.classList.add('show');
+                });
+            });
+            closeBtn.addEventListener('click', function() { modal.classList.remove('show'); });
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) modal.classList.remove('show');
+            });
+        })();
+    </script>
 </body>
 </html>

@@ -90,28 +90,31 @@
     <div class="news-images">
         <div class="news-card">
             <img src="{% static 'news/images/new1.png' %}" alt="News 1">
-            <button type="button" class="read-more-btn" data-modal="modal-1">Read more</button>
+            <button type="button" class="read-more-btn" data-content="1">Read more</button>
         </div>
         <div class="news-card">
             <img src="{% static 'news/images/new2.png' %}" alt="News 2">
-            <button type="button" class="read-more-btn" data-modal="modal-2">Read more</button>
+            <button type="button" class="read-more-btn" data-content="2">Read more</button>
         </div>
         <div class="news-card">
             <img src="{% static 'news/images/new3.png' %}" alt="News 3">
-            <button type="button" class="read-more-btn" data-modal="modal-3">Read more</button>
+            <button type="button" class="read-more-btn" data-content="3">Read more</button>
         </div>
         <div class="news-card">
             <img src="{% static 'news/images/new4.png' %}" alt="News 4">
-            <button type="button" class="read-more-btn" data-modal="modal-4">Read more</button>
+            <button type="button" class="read-more-btn" data-content="4">Read more</button>
         </div>
     </div>
 
-    <!-- 弹窗：内容稍后在此编辑 -->
+    <!-- 弹窗内容来源：每条新闻单独片段，主 HTML 不拥挤 -->
+    <div id="modal-source-1" style="display:none;">{% include "news/snippets/news1_content.html" %}</div>
+    <div id="modal-source-2" style="display:none;">{% include "news/snippets/news2_content.html" %}</div>
+    <div id="modal-source-3" style="display:none;">{% include "news/snippets/news3_content.html" %}</div>
+    <div id="modal-source-4" style="display:none;">{% include "news/snippets/news4_content.html" %}</div>
+
     <div id="modal-overlay" class="modal-overlay">
         <div class="modal-box">
-            <div id="modal-content">
-                <p>waiting for content</p>
-            </div>
+            <div id="modal-content"></div>
             <button type="button" class="modal-close" aria-label="close">close</button>
         </div>
     </div>
@@ -125,7 +128,9 @@
             var closeBtn = overlay.querySelector('.modal-close');
             document.querySelectorAll('.read-more-btn').forEach(function(btn) {
                 btn.addEventListener('click', function() {
-                    content.innerHTML = '<p>waiting for content</p>';
+                    var id = this.getAttribute('data-content');
+                    var source = document.getElementById('modal-source-' + id);
+                    content.innerHTML = source ? source.innerHTML : '<p>waiting for content</p>';
                     overlay.classList.add('show');
                 });
             });
