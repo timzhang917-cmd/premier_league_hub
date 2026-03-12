@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} - PL Hub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background: #f6f4fb;
+            color: #261f33;
+        }
+        .panel {
+            max-width: 560px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(38, 31, 51, 0.08);
+            padding: 1.5rem;
+        }
+        .form-grid { display: grid; gap: 0.9rem; }
+        label {
+            display: block;
+            margin-bottom: 0.35rem;
+            font-weight: 600;
+        }
+        input,
+        select {
+            width: 100%;
+            padding: 0.65rem 0.75rem;
+            border: 1px solid #d4cee2;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font: inherit;
+        }
+        .button,
+        button {
+            display: inline-block;
+            border: none;
+            border-radius: 8px;
+            padding: 0.7rem 1rem;
+            background: #5a4a7a;
+            color: #fff;
+            cursor: pointer;
+            text-decoration: none;
+            font: inherit;
+        }
+        .link-row {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .errorlist {
+            color: #b13b53;
+            margin: 0.4rem 0 0;
+            padding-left: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <h1>{{ page_title }}</h1>
+        <p>{{ match.home_team }} vs {{ match.away_team }}</p>
+        <form method="post" class="form-grid">
+            {% csrf_token %}
+            {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {{ field.errors }}
+                </div>
+            {% endfor %}
+            {% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
+            <button type="submit">{{ submit_label }}</button>
+        </form>
+        <div class="link-row">
+            <a class="button" href="{% url 'match_results_index' %}">Back to matches</a>
+            <a class="button" href="{% url 'league_table_index' %}">View league table</a>
+        </div>
+    </div>
+</body>
+</html>

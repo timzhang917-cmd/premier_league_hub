@@ -1,13 +1,179 @@
 <!DOCTYPE html>
-<html lang="zh-Cn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>League Table - PL Hub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background: #f6f4fb;
+            color: #261f33;
+        }
+        a { color: #5a4a7a; }
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .summary-card,
+        .panel {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(38, 31, 51, 0.08);
+            padding: 1.25rem;
+        }
+        .summary-card strong {
+            display: block;
+            font-size: 1.8rem;
+            margin-bottom: 0.35rem;
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th,
+        td {
+            text-align: left;
+            padding: 0.85rem 0.65rem;
+            border-bottom: 1px solid #ece7f5;
+        }
+        th {
+            font-size: 0.9rem;
+            color: #5d5670;
+        }
+        .position {
+            font-weight: 700;
+            width: 52px;
+        }
+        .points {
+            font-weight: 700;
+        }
+        .helper {
+            color: #5d5670;
+        }
+        .match-list {
+            display: grid;
+            gap: 0.9rem;
+        }
+        .match-item {
+            border: 1px solid #ece7f5;
+            border-radius: 10px;
+            padding: 0.9rem;
+        }
+        .empty {
+            text-align: center;
+            color: #5d5670;
+            padding: 2rem 1rem;
+        }
+        @media (max-width: 900px) {
+            .layout { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
-    <h1>League Table</h1>
-    <p>waiting for content</p>
-    <p><a href="{% url 'home' %}">Back</a></p>
+    <div class="page">
+        <div class="header-row">
+            <div>
+                <h1>League Table</h1>
+                <p class="helper">Standings are calculated from finished match records stored in the database.</p>
+            </div>
+            <p><a href="{% url 'home' %}">Back to Home</a></p>
+        </div>
+
+        <div class="summary">
+            <div class="summary-card">
+                <strong>{{ team_count }}</strong>
+                <span>Tracked clubs</span>
+            </div>
+            <div class="summary-card">
+                <strong>{{ finished_match_count }}</strong>
+                <span>Finished matches counted</span>
+            </div>
+            <div class="summary-card">
+                <strong><a href="{% url 'match_results_index' %}">Open match manager</a></strong>
+                <span>Add or edit fixtures/results</span>
+            </div>
+        </div>
+
+        <div class="layout">
+            <section class="panel">
+                <h2>Standings</h2>
+                {% if standings %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Pos</th>
+                                <th>Club</th>
+                                <th>P</th>
+                                <th>W</th>
+                                <th>D</th>
+                                <th>L</th>
+                                <th>GF</th>
+                                <th>GA</th>
+                                <th>GD</th>
+                                <th>Pts</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in standings %}
+                                <tr>
+                                    <td class="position">{{ row.position }}</td>
+                                    <td>{{ row.team.name }}</td>
+                                    <td>{{ row.played }}</td>
+                                    <td>{{ row.won }}</td>
+                                    <td>{{ row.drawn }}</td>
+                                    <td>{{ row.lost }}</td>
+                                    <td>{{ row.goals_for }}</td>
+                                    <td>{{ row.goals_against }}</td>
+                                    <td>{{ row.goal_difference }}</td>
+                                    <td class="points">{{ row.points }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="empty">No clubs in the database yet. Run migrations to load the starter data.</div>
+                {% endif %}
+            </section>
+
+            <section class="panel">
+                <h2>Upcoming matches</h2>
+                {% if upcoming_matches %}
+                    <div class="match-list">
+                        {% for match in upcoming_matches %}
+                            <div class="match-item">
+                                <strong>{{ match.home_team.short_name }} vs {{ match.away_team.short_name }}</strong>
+                                <div>{{ match.match_date|date:'d M Y H:i' }}</div>
+                                <div class="helper">{{ match.get_status_display }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty">No upcoming fixtures stored right now.</div>
+                {% endif %}
+            </section>
+        </div>
+    </div>
 </body>
 </html>
