@@ -17,10 +17,7 @@ DEFAULT_TEAMS = [
 def seed_forum_teams(apps, schema_editor):
     Team = apps.get_model("teams", "Team")
     for team in DEFAULT_TEAMS:
-        Team.objects.update_or_create(
-            name=team["name"],
-            defaults={"short_name": team["short_name"]},
-        )
+        Team.objects.filter(name=team["name"]).update(short_name=team["short_name"])
 
 
 def unseed_forum_teams(apps, schema_editor):
