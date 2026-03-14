@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Match - PL Hub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background: #f6f4fb;
+            color: #261f33;
+        }
+        .panel {
+            max-width: 520px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(38, 31, 51, 0.08);
+            padding: 1.5rem;
+        }
+        .actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .button,
+        button {
+            display: inline-block;
+            border: none;
+            border-radius: 8px;
+            padding: 0.7rem 1rem;
+            background: #5a4a7a;
+            color: #fff;
+            cursor: pointer;
+            text-decoration: none;
+            font: inherit;
+        }
+        .danger { background: #b13b53; }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <h1>Delete match</h1>
+        <p>Are you sure you want to remove <strong>{{ match.home_team }}</strong> vs <strong>{{ match.away_team }}</strong>?</p>
+        <p>Match time: {{ match.match_date|date:'d M Y H:i' }}</p>
+        <form method="post" class="actions">
+            {% csrf_token %}
+            <button type="submit" class="danger">Delete</button>
+            <a class="button" href="{% url 'match_results_index' %}">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

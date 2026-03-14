@@ -1,13 +1,249 @@
 <!DOCTYPE html>
-<html lang="zh-Cn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Match Results - PL Hub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background: #f6f4fb;
+            color: #261f33;
+        }
+        a { color: #5a4a7a; }
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .summary-card,
+        .panel {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(38, 31, 51, 0.08);
+            padding: 1.25rem;
+        }
+        .summary-card strong {
+            display: block;
+            font-size: 1.8rem;
+            margin-bottom: 0.35rem;
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(280px, 340px) 1fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+        .form-grid {
+            display: grid;
+            gap: 0.9rem;
+        }
+        .form-grid label {
+            display: block;
+            margin-bottom: 0.35rem;
+            font-weight: 600;
+        }
+        .form-grid input,
+        .form-grid select {
+            width: 100%;
+            padding: 0.65rem 0.75rem;
+            border: 1px solid #d4cee2;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font: inherit;
+        }
+        .button,
+        button {
+            display: inline-block;
+            border: none;
+            border-radius: 8px;
+            padding: 0.7rem 1rem;
+            background: #5a4a7a;
+            color: #fff;
+            cursor: pointer;
+            text-decoration: none;
+            font: inherit;
+        }
+        .button.secondary {
+            background: #8675a8;
+        }
+        .button.danger {
+            background: #b13b53;
+        }
+        .helper {
+            color: #5d5670;
+            font-size: 0.95rem;
+        }
+        .messages {
+            list-style: none;
+            padding: 0;
+        }
+        .messages li {
+            background: #e8f7ea;
+            color: #206237;
+            padding: 0.85rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+        .errorlist {
+            color: #b13b53;
+            margin: 0.4rem 0 0;
+            padding-left: 1rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th,
+        td {
+            text-align: left;
+            padding: 0.9rem 0.7rem;
+            border-bottom: 1px solid #ece7f5;
+            vertical-align: middle;
+        }
+        th { font-size: 0.9rem; color: #5d5670; }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.65rem;
+            border-radius: 999px;
+            background: #ece7f5;
+            font-size: 0.85rem;
+        }
+        .status-finished { background: #dff4e4; color: #206237; }
+        .status-scheduled { background: #ece7f5; color: #4c3d68; }
+        .status-postponed { background: #fde9cc; color: #7c4b00; }
+        .score {
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .empty {
+            text-align: center;
+            color: #5d5670;
+            padding: 2rem 1rem;
+        }
+        @media (max-width: 860px) {
+            .layout { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
-    <h1>Match Results</h1>
-    <p>waiting for content</p>
-    <p><a href="{% url 'home' %}">Back</a></p>
+    <div class="page">
+        <div class="header-row">
+            <div>
+                <h1>Matches & Results</h1>
+                <p class="helper">Manage match records from the database and track the latest outcomes.</p>
+            </div>
+            <p><a href="{% url 'home' %}">Back to Home</a></p>
+        </div>
+
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="summary">
+            <div class="summary-card">
+                <strong>{{ matches|length }}</strong>
+                <span>Total matches</span>
+            </div>
+            <div class="summary-card">
+                <strong>{{ finished_count }}</strong>
+                <span>Finished</span>
+            </div>
+            <div class="summary-card">
+                <strong>{{ scheduled_count }}</strong>
+                <span>Scheduled</span>
+            </div>
+        </div>
+
+        <div class="layout">
+            <section class="panel">
+                <h2>Add match</h2>
+                {% if user.is_authenticated %}
+                    <form method="post" class="form-grid">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div>
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.help_text %}<div class="helper">{{ field.help_text }}</div>{% endif %}
+                                {{ field.errors }}
+                            </div>
+                        {% endfor %}
+                        {% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
+                        <button type="submit">Save Match</button>
+                    </form>
+                {% else %}
+                    <p class="helper">Log in to create, edit, or delete match records.</p>
+                    <a class="button" href="{% url 'login' %}?next={{ request.path|urlencode }}">Login</a>
+                {% endif %}
+            </section>
+
+            <section class="panel">
+                <h2>Match list</h2>
+                {% if matches %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Home</th>
+                                <th>Score</th>
+                                <th>Away</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for match in matches %}
+                                <tr>
+                                    <td>{{ match.match_date|date:'d M Y H:i' }}</td>
+                                    <td>{{ match.home_team.short_name }}</td>
+                                    <td class="score">{{ match.scoreline }}</td>
+                                    <td>{{ match.away_team.short_name }}</td>
+                                    <td>
+                                        <span class="status-badge status-{{ match.status }}">{{ match.get_status_display }}</span>
+                                    </td>
+                                    <td>
+                                        {% if user.is_authenticated %}
+                                            <div class="actions">
+                                                <a class="button secondary" href="{% url 'match_results_edit' match.pk %}">Edit</a>
+                                                <a class="button danger" href="{% url 'match_results_delete' match.pk %}">Delete</a>
+                                            </div>
+                                        {% else %}
+                                            <span class="helper">Login required</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="empty">No matches yet. Add one to populate the database and league table.</div>
+                {% endif %}
+            </section>
+        </div>
+    </div>
 </body>
 </html>
