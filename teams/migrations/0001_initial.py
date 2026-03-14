@@ -17,6 +17,7 @@ class Migration(migrations.Migration):
                 ("founded_year", models.PositiveIntegerField()),
                 ("description", models.TextField()),
                 ("logo_filename", models.CharField(blank=True, max_length=100)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
             ],
             options={"ordering": ["name"]},
         ),

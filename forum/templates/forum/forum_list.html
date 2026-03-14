@@ -1,0 +1,70 @@
+{% extends "forum/base_forum.html" %}
+{% block title %}PL Hub | Forum{% endblock %}
+
+{% block content %}
+<header class="forum-surface forum-hero mb-4">
+  <div class="row g-4 align-items-end">
+    <div class="col-lg-8">
+      <p class="section-kicker mb-2">Discussion Forum</p>
+      <h1 class="display-6 fw-semibold mb-2">Share match reactions, transfer rumours, and tactical takes.</h1>
+      <p class="forum-subtitle mb-0">Browse recent posts, search by keyword, or narrow the feed to a specific club.</p>
+    </div>
+    <div class="col-lg-4 text-lg-end">
+      <a class="forum-btn forum-btn-primary forum-btn-large" href="{% url 'forum:create_post' %}">Create post</a>
+    </div>
+  </div>
+</header>
+
+<section class="forum-surface forum-search-card mb-4">
+  <div class="forum-surface__body">
+    <form method="get" class="row g-3 align-items-end" aria-label="Search and filter posts">
+      <div class="col-12 col-md-6">
+        <label for="q" class="form-label">Keyword</label>
+        <input id="q" name="q" type="search" class="form-control" value="{{ q|default:'' }}" placeholder="e.g., Arsenal, injuries, tactics">
+        <div class="form-text">Searches title, content, author, and team.</div>
+      </div>
+      <div class="col-12 col-md-4">
+        <label for="team" class="form-label">Team</label>
+        <select id="team" name="team" class="form-select" aria-describedby="teamHelp">
+          <option value="">All teams</option>
+          {% for t in teams %}
+            <option value="{{ t.id }}" {% if selected_team_id == t.id %}selected{% endif %}>{{ t.name }}</option>
+          {% endfor %}
+        </select>
+        <div id="teamHelp" class="form-text">Show posts linked to one club.</div>
+      </div>
+      <div class="col-12 col-md-2 d-grid">
+        <button type="submit" class="forum-btn forum-btn-ghost">Apply</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+{% if posts %}
+  <section class="vstack gap-3" aria-label="Forum posts">
+    {% for post in posts %}
+      <article class="forum-surface post-card">
+        <div class="forum-surface__body">
+          <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+            <span class="forum-badge">{{ post.team.name }}</span>
+            <span class="small forum-meta">by {{ post.author.username }}</span>
+            <time class="small forum-meta" datetime="{{ post.created_at|date:'c' }}">{{ post.created_at|date:"Y-m-d H:i" }}</time>
+          </div>
+          <h2 class="h4 mb-2 forum-title">
+            <a class="stretched-link forum-title__link" href="{% url 'forum:post_detail' post.pk %}">{{ post.title }}</a>
+          </h2>
+          <p class="mb-0 forum-meta">{{ post.content|truncatechars:180 }}</p>
+        </div>
+      </article>
+    {% endfor %}
+  </section>
+{% else %}
+  <div class="forum-surface empty-state">
+    <div class="forum-surface__body text-center">
+      <h2 class="h4 mb-2">No posts found</h2>
+      <p class="forum-meta mb-3">Try a different keyword or publish the first discussion topic.</p>
+      <a class="forum-btn forum-btn-primary" href="{% url 'forum:create_post' %}">Start a discussion</a>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}
