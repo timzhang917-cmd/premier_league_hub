@@ -1,0 +1,77 @@
+{% extends "forum/base_forum.html" %}
+{% block title %}PL Hub | Create Post{% endblock %}
+
+{% block content %}
+<header class="forum-surface forum-hero mb-4">
+  <p class="section-kicker mb-2">Create Post</p>
+  <h1 class="display-6 fw-semibold mb-2">Publish a new discussion topic.</h1>
+  <p class="forum-subtitle mb-0">Login is required. Every post must be linked to one team.</p>
+</header>
+
+{% if form.errors %}
+  <div class="alert alert-danger forum-alert" role="alert" aria-live="assertive">
+    <h2 class="h5 mb-2">Submission failed</h2>
+    <p class="mb-2">Please fix the following issues and submit again:</p>
+    <ul class="mb-0">
+      {% for field in form %}
+        {% if field.errors %}
+          <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
+        {% endif %}
+      {% endfor %}
+      {% if form.non_field_errors %}
+        <li><strong>Other:</strong> {{ form.non_field_errors|striptags }}</li>
+      {% endif %}
+    </ul>
+  </div>
+{% endif %}
+
+<form id="plh-post-form" class="needs-validation {% if form.errors %}was-validated{% endif %}" method="post" novalidate aria-label="Create post form">
+  {% csrf_token %}
+  <div class="forum-surface">
+    <div class="forum-surface__body">
+      <div class="mb-4">
+        <label for="{{ form.team.id_for_label }}" class="form-label">{{ form.team.label }}</label>
+        {{ form.team }}
+        <div id="teamHelp" class="form-text">{{ form.team.help_text }}</div>
+        {% if form.team.errors %}
+          <div id="teamErr" class="invalid-feedback d-block">{{ form.team.errors|striptags }}</div>
+        {% else %}
+          <div class="invalid-feedback">Please select a team.</div>
+        {% endif %}
+      </div>
+
+      <div class="mb-4">
+        <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+        {{ form.title }}
+        <div id="titleHelp" class="form-text">{{ form.title.help_text }}</div>
+        {% if form.title.errors %}
+          <div id="titleErr" class="invalid-feedback d-block">{{ form.title.errors|striptags }}</div>
+        {% else %}
+          <div class="invalid-feedback">Title must be at least 5 characters.</div>
+        {% endif %}
+      </div>
+
+      <div class="mb-4">
+        <label for="{{ form.content.id_for_label }}" class="form-label">{{ form.content.label }}</label>
+        {{ form.content }}
+        <div class="d-flex justify-content-between align-items-start">
+          <div id="contentHelp" class="form-text">{{ form.content.help_text }}</div>
+          <div class="form-text"><span id="contentCount">0</span> chars</div>
+        </div>
+        {% if form.content.errors %}
+          <div id="contentErr" class="invalid-feedback d-block">{{ form.content.errors|striptags }}</div>
+        {% else %}
+          <div class="invalid-feedback">Content must be at least 20 characters.</div>
+        {% endif %}
+      </div>
+
+      <div class="d-flex flex-wrap gap-2">
+        <button type="submit" class="forum-btn forum-btn-primary">Publish</button>
+        <a class="forum-btn forum-btn-secondary" href="{% url 'forum:forum_list' %}">Back to list</a>
+      </div>
+    </div>
+  </div>
+</form>
+
+<p class="small forum-meta mt-3 mb-0">Client-side validation improves UX only. Server-side validation and CSRF protection remain authoritative.</p>
+{% endblock %}

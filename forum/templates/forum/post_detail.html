@@ -1,0 +1,24 @@
+{% extends "forum/base_forum.html" %}
+{% block title %}PL Hub | Post Detail{% endblock %}
+
+{% block content %}
+<article class="forum-surface">
+  <div class="forum-surface__body">
+    <header class="mb-4">
+      <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+        <span class="forum-badge">{{ post.team.name }}</span>
+        <span class="small forum-meta">Author: {{ post.author.username }}</span>
+        <time class="small forum-meta" datetime="{{ post.created_at|date:'c' }}">Created: {{ post.created_at|date:"Y-m-d H:i" }}</time>
+      </div>
+      <h1 class="display-6 fw-semibold mb-0">{{ post.title }}</h1>
+    </header>
+    <section>
+      <p class="post-content mb-0">{{ post.content }}</p>
+    </section>
+  </div>
+  <div class="forum-surface__footer d-flex flex-wrap gap-2">
+    <a class="forum-btn forum-btn-secondary" href="{% url 'forum:forum_list' %}">Back to list</a>
+    <a class="forum-btn forum-btn-primary" href="{% url 'forum:create_post' %}">Create another</a>
+  </div>
+</article>
+{% endblock %}
