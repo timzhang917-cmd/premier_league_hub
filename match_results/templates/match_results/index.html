@@ -181,7 +181,7 @@
         <div class="layout">
             <section class="panel">
                 <h2>Add match</h2>
-                {% if user.is_authenticated %}
+                {% if user.is_staff %}
                     <form method="post" class="form-grid">
                         {% csrf_token %}
                         {% for field in form %}
@@ -195,8 +195,10 @@
                         {% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
                         <button type="submit">Save Match</button>
                     </form>
+                {% elif user.is_authenticated %}
+                    <p class="helper">Only staff/admin users can create, edit, or delete match records.</p>
                 {% else %}
-                    <p class="helper">Log in to create, edit, or delete match records.</p>
+                    <p class="helper">Log in with a staff/admin account to create, edit, or delete match records.</p>
                     <a class="button" href="{% url 'login' %}?next={{ request.path|urlencode }}">Login</a>
                 {% endif %}
             </section>
@@ -226,13 +228,13 @@
                                         <span class="status-badge status-{{ match.status }}">{{ match.get_status_display }}</span>
                                     </td>
                                     <td>
-                                        {% if user.is_authenticated %}
+                                        {% if user.is_staff %}
                                             <div class="actions">
                                                 <a class="button secondary" href="{% url 'match_results_edit' match.pk %}">Edit</a>
                                                 <a class="button danger" href="{% url 'match_results_delete' match.pk %}">Delete</a>
                                             </div>
                                         {% else %}
-                                            <span class="helper">Login required</span>
+                                            <span class="helper">Staff/admin only</span>
                                         {% endif %}
                                     </td>
                                 </tr>
